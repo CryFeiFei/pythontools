@@ -8,8 +8,32 @@ from reportlab.pdfbase.ttfonts import TTFont
 
 #需要预告安装支持中文的字体，如simfang从win拷贝过来安装
 def createPdf(dstpath,fileList):
-    img = Image.open( fileList[0].encode('UTF-8') )
-    c = canvas.Canvas(dstpath, img.size)#第一张图片的尺寸新建pdf
+    # 遍历循环使用最大的一个数值来当作每页的大小
+    #width = img.size[0]
+    #height = img.size[1]
+    # 删除第一个跟最后一个
+    del fileList[0]
+    del fileList[len(fileList) - 1]
+    #找到最大的size的高度跟宽度
+    imagePDFMax = Image.open(fileList[0].encode('UTF-8'))
+    heightMax = imagePDFMax.size[1]
+    widthMax = imagePDFMax.size[0]
+    sizeMax = []
+    for pdfFile in fileList:
+        imgPDF = Image.open(pdfFile.encode('UTF-8'))
+        heightCurrent = imgPDF.size[1]
+        widthCurrent = imgPDF.size[0]
+        if (heightCurrent > heightMax):
+            heightMax = heightCurrent
+        if (widthCurrent > widthMax):
+            widthMax = widthCurrent
+        
+    sizeMax.append(widthMax)
+    sizeMax.append(heightMax)
+    print ("!!!!!!!!!!!!!!!!!!!!!!!!1")
+    print (heightMax)
+#    img = Image.open( pdfmax.encode('UTF-8') )
+    c = canvas.Canvas(dstpath, sizeMax)#第一张图片的尺寸新建pdf
 
     pdfmetrics.registerFont(TTFont('simfang','simfang.ttf')) #注册字体
     fontheight=15
